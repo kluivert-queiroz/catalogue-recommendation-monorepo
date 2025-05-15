@@ -1,33 +1,47 @@
 services:
-  # api:
-  #   container_name: api
-  #   restart: always
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - 3000:3000
-  #   depends_on:
-  #     - cassandra1
-  #     - postgres
-  #     - qdrant
-  #   env_file:
-  #     - ./.env
+  api:
+    &app
+    image: app-image
+    pull_policy: never
+    container_name: api
+    command: "npx nx serve api --host 0.0.0.0 --configuration production"
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - cassandra1
+      - postgres
+      - qdrant
+      - rabbitmq
+    env_file:
+      - ./.env
+    # cpus: '0.5'
+    # mem_limit: 256M
+  worker1:
+    <<: *app
+    container_name: worker1
+    command: "npx nx serve worker --host 0.0.0.0 --configuration production"
+    ports: []
+  worker2:
+    <<: *app
+    container_name: worker2
+    command: "npx nx serve worker --host 0.0.0.0 --configuration production"
+    ports: []
   cassandra1:
     image: cassandra:4.1.8
     container_name: cassandra-container
-    command: "sh /cassandra-init.sh"
+    command: 'sh /cassandra-init.sh'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "[ $$(nodetool statusgossip) = running ]"]
+      test: ['CMD-SHELL', '[ $$(nodetool statusgossip) = running ]']
       interval: 120s
       timeout: 10s
       retries: 5
     ports:
-      - "9042:9042"
+      - '9042:9042'
     environment:
       - CASSANDRA_USER=cassandra
       - CASSANDRA_PASSWORD=cassandra
@@ -35,15 +49,15 @@ services:
     volumes:
       - ./schema/cassandra:/schema/cassandra
       - ./schema/cassandra/cassandra-init.sh:/cassandra-init.sh
-    cpus: '3'
-    mem_limit: 8G
+    cpus: '2'
+    mem_limit: 6G
   postgres:
     container_name: postgres
     image: postgres
     volumes:
       - ./schema/postgres:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       - POSTGRES_PASSWORD=password
     cpus: '0.1'
@@ -65,8 +79,8 @@ services:
     image: rabbitmq:3.13.7-management-alpine
     container_name: rabbitmq
     ports:
-      - "15672:15672" # management UI
-      - "5672:5672"   # AMQP protocol
+      - '15672:15672' # management UI
+      - '5672:5672' # AMQP protocol
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
