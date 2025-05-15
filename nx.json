@@ -4,10 +4,7 @@
     "enabled": false
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
@@ -28,7 +25,8 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "exclude": ["shared/*"]
     },
     {
       "plugin": "@nx/webpack/plugin",
@@ -45,6 +43,22 @@
       "options": {
         "targetName": "lint"
       }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": ["shared/*"],
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        }
+      }
     }
-  ]
+  ],
+  "targetDefaults": {
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  }
 }

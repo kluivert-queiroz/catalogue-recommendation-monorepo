@@ -1,7 +1,10 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { ShowsService } from './shows.service';
-import { QdrantService } from '../../common/qdrant/qdrant.service';
-import { EmbeddingService } from '../../embedding/embedding.service';
+import {
+  EmbeddingService,
+  QdrantService,
+  ShowsService,
+  ShowQdrantPayload
+} from '@catalogue-recommendation-monorepo/shared';
 
 @Injectable()
 export class ShowsIndexerService implements OnApplicationBootstrap {
@@ -62,7 +65,7 @@ export class ShowsIndexerService implements OnApplicationBootstrap {
             voteCount: show.voteCount,
             popularity: show.popularity,
             studio: show.productionCompanies,
-          },
+          } as ShowQdrantPayload,
         });
         if (batch.length >= batchSize) {
           await Promise.all([

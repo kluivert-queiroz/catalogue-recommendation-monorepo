@@ -1,9 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Watchlist } from '../models/watchlist.model';
 import { mapping } from 'cassandra-driver';
-import { WatchlistEntity } from './entities/Watchlist.entity';
-import { CassandraService } from '../../common/cassandra/cassandra.service';
-import { ShowsService } from '../../shows/services/shows.service';
+import { WatchlistEntity } from './entities/watchlist.entity';
+import {
+  CassandraService,
+  ShowsService,
+} from '@catalogue-recommendation-monorepo/shared';
 
 @Injectable()
 export class WatchlistRepository implements OnModuleInit {
@@ -12,8 +14,8 @@ export class WatchlistRepository implements OnModuleInit {
     private readonly showsService: ShowsService
   ) {}
 
-  mapper: mapping.Mapper;
-  watchlistMapper: mapping.ModelMapper<WatchlistEntity>;
+  mapper!: mapping.Mapper;
+  watchlistMapper!: mapping.ModelMapper<WatchlistEntity>;
   onModuleInit() {
     const mappingOptions: mapping.MappingOptions = {
       models: {
@@ -55,7 +57,7 @@ export class WatchlistRepository implements OnModuleInit {
   ): Promise<Watchlist> {
     const shows = await Promise.all(
       entities.map(async (entity) => {
-        const show = await this.showsService.getShow(entity.showId);
+        const show = await this.showsService.getShowById(entity.showId);
         return show!;
       })
     );

@@ -1,17 +1,16 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { WatchedShowEvent } from '../watched-show.event';
-import { ClientProxy, RmqStatus } from '@nestjs/microservices';
-import { Inject } from '@nestjs/common';
+import { WatchedShowEvent } from '@catalogue-recommendation-monorepo/shared';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @EventsHandler(WatchedShowEvent)
 export class WatchedShowEventHandler
   implements IEventHandler<WatchedShowEvent>
 {
-  constructor(@Inject('WATCHLIST_SERVICE') private client: ClientProxy) {}
+  constructor(private readonly amqpConnection: AmqpConnection) {}
 
   async handle(event: WatchedShowEvent) {
     try {
-      this.client.emit('watched_show', event);
+      await this.amqpConnection.publish('watchlist', 'watched-show', event);
     } catch (error) {
       console.error('Error handling WatchedShowEvent:', error);
     }

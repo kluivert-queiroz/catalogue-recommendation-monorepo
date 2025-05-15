@@ -1,3 +1,3 @@
 export class WatchShowDto {
-  showId: string;
+  showId: number;
 }

@@ -1,7 +1,7 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { WatchShowCommand } from '../watch-show.command';
 import { WatchlistRepository } from '../../repositories/watchlist.repository';
-import { ShowsService } from '../../../shows/services/shows.service';
+import { ShowsService } from '@catalogue-recommendation-monorepo/shared';
 
 @CommandHandler(WatchShowCommand)
 export class WatchShowHandler implements ICommandHandler<WatchShowCommand> {
@@ -15,7 +15,7 @@ export class WatchShowHandler implements ICommandHandler<WatchShowCommand> {
     const watchlist = this.publisher.mergeObjectContext(
       await this.watchlistRepository.findByUserId(userId),
     );
-    const show = await this.showsService.getShow(showId);
+    const show = await this.showsService.getShowById(showId);
     if (!show) {
       throw new Error(`Show with ID ${showId} not found`);
     }

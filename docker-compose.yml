@@ -11,19 +11,19 @@ services:
   #   ports:
   #     - 3000:3000
   #   depends_on:
-  #     - cassandra
+  #     - cassandra1
   #     - postgres
   #     - qdrant
   #   env_file:
   #     - ./.env
-  cassandra:
-    image: cassandra:latest
+  cassandra1:
+    image: cassandra:4.1.8
     container_name: cassandra-container
     command: "sh /cassandra-init.sh"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "[ $$(nodetool statusgossip) = running ]"]
-      interval: 30s
+      interval: 120s
       timeout: 10s
       retries: 5
     ports:
@@ -31,12 +31,12 @@ services:
     environment:
       - CASSANDRA_USER=cassandra
       - CASSANDRA_PASSWORD=cassandra
-      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_SEEDS=cassandra1
     volumes:
       - ./schema/cassandra:/schema/cassandra
       - ./schema/cassandra/cassandra-init.sh:/cassandra-init.sh
-    cpus: '4'
-    mem_limit: 6G
+    cpus: '3'
+    mem_limit: 8G
   postgres:
     container_name: postgres
     image: postgres

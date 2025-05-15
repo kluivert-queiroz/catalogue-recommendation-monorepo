@@ -5,6 +5,12 @@
   "references": [
     {
       "path": "./apps/api"
+    },
+    {
+      "path": "./shared"
+    },
+    {
+      "path": "./apps/worker"
     }
   ]
 }

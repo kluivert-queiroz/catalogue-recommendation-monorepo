@@ -1,26 +1,25 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { WatchedShowEvent } from '../events/watched-show.event';
-import { ShowEntity } from '../../shows/repositories/entities/show.entity';
-
+import {
+  ShowEntity,
+  ShowModel,
+  WatchedShowEvent,
+} from '@catalogue-recommendation-monorepo/shared';
 interface WatchlistProps {
   userId: string;
-  shows: ShowEntity[];
+  shows: ShowModel[];
 }
 export class Watchlist extends AggregateRoot {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  shows: ShowEntity[] = [];
-  userId: string;
+  shows: ShowModel[] = [];
+  userId!: string;
 
   constructor(properties: WatchlistProps) {
     super();
-    // Object.assign(this, properties);
-    this.userId = properties.userId;
-    this.shows = properties.shows;
+    Object.assign(this, properties);
   }
-  watchShow(show: ShowEntity) {
+  watchShow(show: ShowModel) {
     // if (!this.shows.find(({ id }) => id === show.id)) {
-      this.shows.push(show);
-      this.apply(new WatchedShowEvent(this.userId, show));
+    this.shows.push(show);
+    this.apply(new WatchedShowEvent(this.userId, show));
     // }
   }
 }
