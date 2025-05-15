@@ -9,7 +9,11 @@ It's using CQRS pattern for the code, as soon as the user watchs a show a messag
 
 ## How to run
 
-Run docker compose
-```shell
-docker compose up
+1. Run docker compose `docker compose up`
+2. POST `/api/watchlist/:userId/watch-movie`
+```json 
+{
+  "showId": 127532
+}
 ```
+3. GET `/api/recommendations/:userId` to see the recommendations
