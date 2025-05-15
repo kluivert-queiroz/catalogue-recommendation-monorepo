@@ -1,11 +1,7 @@
 import {
-  Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   Param,
-  Post,
-  UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetRecommendationsQuery } from './queries/get-recommendations.query';

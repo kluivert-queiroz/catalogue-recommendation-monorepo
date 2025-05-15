@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
 import { WatchlistModule } from '../watchlist/watchlist.module';
 import { ConfigModule } from '@nestjs/config';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   QdrantModule,
   CassandraService,
-  ShowEntity,
   ShowsModule,
   EmbeddingModule,
   RecommendationsModule,
