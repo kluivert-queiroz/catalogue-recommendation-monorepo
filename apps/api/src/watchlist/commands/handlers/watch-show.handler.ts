@@ -16,7 +16,7 @@ export class WatchShowHandler implements ICommandHandler<WatchShowCommand> {
   async execute(command: WatchShowCommand) {
     const { userId, showId } = command;
     const watchlist = this.publisher.mergeObjectContext(
-      await this.watchlistRepository.findByUserId(userId)
+      await this.watchlistRepository.findPaginatedByUserId(userId, {fetchSize: 10})
     );
     const show = await this.showsService.getShowById(showId);
     if (!show) {

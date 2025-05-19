@@ -5,20 +5,18 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { WatchShowDto } from './interfaces/watch-show.dto';
 import { WatchShowCommand } from './commands/watch-show.command';
 import { GetWatchlistQuery } from './queries/get-watchlist.query';
-import { ShowsService } from '@catalogue-recommendation-monorepo/shared';
+import { ApiQuery } from '@nestjs/swagger';
+
 @Controller('watchlist')
 export class WatchlistController {
-  constructor(
-    private commandBus: CommandBus,
-    private queryBus: QueryBus,
-    private readonly showsService: ShowsService
-  ) {}
+  constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
   @Post(':userId/watch-movie')
   async watchMovie(
@@ -31,7 +29,14 @@ export class WatchlistController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':userId')
-  getWatchlist(@Param('userId') userId: string) {
-    return this.queryBus.execute(new GetWatchlistQuery(userId));
+  @ApiQuery({
+    name: 'pageState',
+    required: false,
+  })
+  getWatchlist(
+    @Param('userId') userId: string,
+    @Query('pageState') pageState?: string
+  ) {
+    return this.queryBus.execute(new GetWatchlistQuery(userId, pageState));
   }
 }

@@ -30,13 +30,27 @@ export class WatchlistRepository implements OnModuleInit {
       .createMapper(mappingOptions)
       .forModel('WatchlistEntity');
   }
-  async findByUserId(userId: string): Promise<Watchlist> {
+  async findPaginatedByUserId(
+    userId: string,
+    {
+      fetchSize,
+      pageState,
+    }: {
+      fetchSize: number;
+      pageState?: string;
+    }
+  ): Promise<Watchlist> {
     const defaultWatchlist = new Watchlist({ userId, shows: [] });
-    const result = await this.watchlistMapper.find({ userId });
+    // Fazer o type Paginated<T> pra retornar o pageState na resposta
+    const result = await this.watchlistMapper.find(
+      { userId },
+      {},
+      { fetchSize, pageState: pageState as unknown as number }
+    );
     if (result.toArray().length === 0) {
       return defaultWatchlist;
     }
-    return this.entitiesToModel(result.toArray());
+    return this.entitiesToModel(result.toArray(), result.pageState);
   }
   async save(watchlist: Watchlist): Promise<void> {
     const entities: WatchlistEntity[] = watchlist.shows.map((show) => ({
@@ -53,7 +67,8 @@ export class WatchlistRepository implements OnModuleInit {
     });
   }
   private async entitiesToModel(
-    entities: WatchlistEntity[]
+    entities: WatchlistEntity[],
+    pageState?: string
   ): Promise<Watchlist> {
     const shows = await Promise.all(
       entities.map(async (entity) => {
@@ -64,6 +79,7 @@ export class WatchlistRepository implements OnModuleInit {
     return new Watchlist({
       userId: entities[0].userId,
       shows,
+      pageState,
     });
   }
 }

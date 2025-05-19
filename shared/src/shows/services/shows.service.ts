@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReadStream } from 'fs';
 import { ShowEntity, ShowQdrantPayload } from '../entities';
@@ -7,6 +7,8 @@ import { QdrantService } from '../../lib/qdrant';
 import { EmbeddingService } from '../../lib/embedding';
 import { ShowModel } from '../models';
 import { QdrantClient } from '@qdrant/js-client-rest';
+import { Paginated } from 'src/lib/postgres';
+import { GetShowsDto } from '../interfaces/get-shows.dto';
 
 type QdrantSearchResponse = (Awaited<ReturnType<QdrantClient['search']>>[0] & {
   payload: ShowQdrantPayload;
@@ -30,6 +32,27 @@ export class ShowsService {
   async getAllShows() {
     return this.showsRepository.find();
   }
+  async findShowsPaginated({
+    take = 10,
+    skip,
+    search,
+  }: {
+    take?: number;
+    skip?: number;
+    search: Omit<GetShowsDto, 'skip' | 'take'>;
+  }): Promise<Paginated<ShowModel>> {
+    const [data, count] = await this.showsRepository.findAndCount({
+      take,
+      skip,
+      where: {
+        name: search.name && Like(`%${search.name}%`),
+        genres: search.genres && Like(`%${search.genres}%`),
+        voteAverage: search.voteAverage && MoreThanOrEqual(search.voteAverage),
+      },
+    });
+    return { data: data.map((e) => e.toModel()), count };
+  }
+
   async getAllNotIndexedShows() {
     return (await this.showsRepository.findBy({ indexed: false })).map((s) =>
       s.toModel()

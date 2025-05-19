@@ -8,7 +8,10 @@ export class GetWatchlistHandler implements IQueryHandler<GetWatchlistQuery> {
   constructor(private readonly watchlistRepository: WatchlistRepository) {}
 
   async execute(query: GetWatchlistQuery): Promise<Watchlist | null> {
-    const watchlist = await this.watchlistRepository.findByUserId(query.userId);
+    const watchlist = await this.watchlistRepository.findPaginatedByUserId(
+      query.userId,
+      { fetchSize: 10, pageState: query.pageState }
+    );
     return watchlist;
   }
 }

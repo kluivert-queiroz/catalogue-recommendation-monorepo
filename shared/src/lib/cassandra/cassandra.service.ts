@@ -12,7 +12,7 @@ export class CassandraService {
       localDataCenter: process.env.DB_CASSANDRA_DATACENTER!,
       authProvider: new auth.PlainTextAuthProvider(
         process.env.DB_CASSANDRA_USER!,
-        process.env.DB_CASSANDRA_PASSWORD!,
+        process.env.DB_CASSANDRA_PASSWORD!
       ),
     });
   }

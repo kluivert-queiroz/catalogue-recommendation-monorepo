@@ -7,19 +7,21 @@ import {
 interface WatchlistProps {
   userId: string;
   shows: ShowModel[];
+  pageState?: string;
 }
 export class Watchlist extends AggregateRoot {
   shows: ShowModel[] = [];
   userId!: string;
+  pageState?: string;
 
   constructor(properties: WatchlistProps) {
     super();
     Object.assign(this, properties);
   }
   watchShow(show: ShowModel) {
-    // if (!this.shows.find(({ id }) => id === show.id)) {
-    this.shows.push(show);
-    this.apply(new WatchedShowEvent(this.userId, show));
-    // }
+    if (!this.shows.find(({ id }) => id === show.id)) {
+      this.shows.push(show);
+      this.apply(new WatchedShowEvent(this.userId, show));
+    }
   }
 }

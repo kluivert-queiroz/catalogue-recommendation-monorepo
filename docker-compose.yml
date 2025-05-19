@@ -4,7 +4,7 @@ services:
     image: app-image
     pull_policy: never
     container_name: api
-    command: "npx nx serve api --host 0.0.0.0 --configuration production"
+    command: "npx nx serve api --host 0.0.0.0"
     restart: always
     build:
       context: .
@@ -18,6 +18,8 @@ services:
       - rabbitmq
     env_file:
       - ./.env
+    volumes:
+      - ./apps:/app/apps
     # cpus: '0.5'
     # mem_limit: 256M
   worker1:
