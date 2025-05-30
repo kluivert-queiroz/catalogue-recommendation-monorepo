@@ -7,6 +7,9 @@ This is a recommendation system, users can send their watched shows and the syst
 
 It's using CQRS pattern for the code, as soon as the user watchs a show a message is sent to RabbitMQ so the worker can consume it. It retrieves the show and ask Qdrant for similar shows, then writes similar shows on Cassandra so users can retrieve them from there.
 
+### Diagram
+![Sequence Diagram](/docs/sequence-diagram.png?raw=true)
+
 ## How to run
 
 1. Run docker compose `docker compose up`
@@ -17,3 +20,5 @@ It's using CQRS pattern for the code, as soon as the user watchs a show a messag
 }
 ```
 3. GET `/api/recommendations/:userId` to see the recommendations
+
+

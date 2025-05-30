@@ -1,0 +1,60 @@
+@startuml
+autonumber
+actor User as user
+participant "Watchlist Service" as watchlist #tomato
+participant "Recommendations Service" as recommendations #tomato
+participant "Shows Service" as shows #tomato
+participant "Worker" as worker #PaleGreen
+participant "Queue" as queue 
+participant "Cassandra" as cassandra #DarkTurquoise
+participant "Postgres" as pg #CornflowerBlue
+participant "Qdrant" as qdrant #Darkorange
+
+shows -> qdrant: Generate token vectors and index shows
+
+user -> watchlist: Watch show command (userId, showId)
+watchlist -> shows: GET show details
+shows -> pg: query show details
+pg -> shows: return show details
+shows -> watchlist: return show details
+watchlist -> worker: emit event "watched-show"
+watchlist -> user: return success response
+
+worker <<- queue: process "watched-show" message
+worker -> shows: GET show details
+worker -> worker: Use MiniLM to generate token vectors
+worker -> shows: GET similar shows based on token vectors
+shows -> qdrant: query similar shows
+qdrant -> shows: return similar shows
+shows -> worker: return similar shows
+worker -> cassandra: store recommendations in watchlist db
+
+user -> recommendations: GET Recommendations Query (userId)
+recommendations -> cassandra: query recommendations
+cassandra -> recommendations: return recommendations
+recommendations -> user: return recommendations
+
+' ui -> api: mutation createCart() to create a empty cart session
+' ui <- api: save cart data on context
+' ui -> api: query products()
+' ui <- api: products w/ title, description etc...
+' user <- ui: render products
+' user -> ui: clicks on product
+' user <- ui: render modal to manage item on cart
+' user -> ui: clicks add to cart
+' ui -> api: mutation addItemsToCart(cartId, items)
+' ui <- api: event from server "itemsAddedToCart"
+' user <- ui: alert about stock updates
+' note right
+' stock update events
+' are sent to all users
+' end note
+' user -> ui: clicks remove from cart
+' ui -> api: mutation removeItemsFromCart(cartId, items)
+' ui <- api: event from server "removeItemsFromCart"
+' user <- ui: alert about stock updates
+' note right
+' stock update events
+' are sent to all users
+' end note
+@enduml
