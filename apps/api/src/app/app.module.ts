@@ -8,7 +8,7 @@ import {
   EmbeddingModule,
   RecommendationsModule,
 } from '@catalogue-recommendation-monorepo/shared';
-import { ShowsIndexerService } from '../shows/services/shows-indexer.service';
+import { ShowsIndexerService } from '../../../../shared/src/shows/services/shows-indexer.service';
 
 @Module({
   imports: [

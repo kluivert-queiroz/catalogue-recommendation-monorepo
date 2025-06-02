@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShowsController } from './shows.controller';
 import { QueryHandlers } from './queries/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ShowsIndexerService } from './services/shows-indexer.service';
 
 const pgModule = TypeOrmModule.forRoot({
   type: 'postgres',
@@ -31,7 +32,7 @@ const pgModule = TypeOrmModule.forRoot({
     pgModule,
   ],
   controllers: [ShowsController],
-  exports: [ShowsService],
-  providers: [...QueryHandlers, ShowsService],
+  exports: [ShowsService, ShowsIndexerService],
+  providers: [...QueryHandlers, ShowsService, ShowsIndexerService],
 })
 export class ShowsModule {}

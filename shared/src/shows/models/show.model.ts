@@ -1,3 +1,5 @@
+import { IndexedState } from '../entities/show.entity';
+
 interface ShowProps {
   id: number;
   type: string;
@@ -14,7 +16,7 @@ interface ShowProps {
   voteCount: number;
   productionCompanies: string;
   productionCountries: string;
-  indexed: boolean;
+  indexedState: IndexedState;
 }
 export class ShowModel {
   id!: number;
@@ -32,7 +34,7 @@ export class ShowModel {
   voteCount!: number;
   productionCompanies!: string;
   productionCountries!: string;
-  indexed!: boolean;
+  indexedState!: IndexedState;
   constructor(props: ShowProps) {
     Object.assign(this, props);
   }

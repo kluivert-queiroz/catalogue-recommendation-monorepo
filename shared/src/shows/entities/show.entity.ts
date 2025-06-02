@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { ShowModel } from '../models/show.model';
 
 export interface ShowQdrantPayload {
@@ -10,6 +10,12 @@ export interface ShowQdrantPayload {
   voteCount: number;
   popularity: number;
   studio: string;
+}
+
+export enum IndexedState {
+  NOT_INDEXED = 'not_indexed',
+  INDEXING = 'indexing',
+  INDEXED = 'indexed',
 }
 
 @Entity('shows')
@@ -45,8 +51,19 @@ export class ShowEntity {
   @Column({ type: 'text', nullable: true })
   productionCountries: string;
 
-  @Column({ type: 'bool', default: false })
-  indexed: boolean;
+  @Column({
+    type: 'enum',
+    default: IndexedState.NOT_INDEXED,
+    enum: IndexedState,
+  })
+  indexedState!: IndexedState;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updatedAt: Date;
 
   toModel() {
     return new ShowModel({
@@ -55,8 +72,8 @@ export class ShowEntity {
       name: this.name,
       originalName: this.originalName,
       overview: this.overview,
-      firstAirDate: this.firstAirDate ? new Date(this.firstAirDate) : null,
-      lastAirDate: this.lastAirDate ? new Date(this.lastAirDate) : null,
+      firstAirDate: this.firstAirDate ? new Date(this.firstAirDate) : undefined,
+      lastAirDate: this.lastAirDate ? new Date(this.lastAirDate) : undefined,
       genres: this.genres,
       popularity: this.popularity,
       voteAverage: this.voteAverage,
@@ -65,7 +82,7 @@ export class ShowEntity {
       originCountry: this.originCountry,
       productionCompanies: this.productionCompanies,
       productionCountries: this.productionCountries,
-      indexed: this.indexed,
+      indexedState: this.indexedState,
     });
   }
 }

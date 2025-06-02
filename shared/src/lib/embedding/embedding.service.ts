@@ -1,4 +1,3 @@
-// embedding.service.ts
 import { Injectable } from '@nestjs/common';
 import {
   FeatureExtractionPipeline,

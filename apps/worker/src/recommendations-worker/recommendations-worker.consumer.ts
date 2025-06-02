@@ -14,7 +14,7 @@ export class RecommendationsConsumer {
   })
   handleWatchedShow(@RabbitPayload() data: WatchedShowEvent) {
     return this.commandBus.execute(
-      new RecommendMoreShowsCommand(data.userId, data.show.id)
+      new RecommendMoreShowsCommand(data.userId, data.showId)
     );
   }
 }

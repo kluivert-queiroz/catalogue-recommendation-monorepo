@@ -10,7 +10,7 @@ export class WatchedShowEventHandler
 
   async handle(event: WatchedShowEvent) {
     try {
-      await this.amqpConnection.publish('watchlist', 'watched-show', event);
+      await this.amqpConnection.publish('watchlist', 'watched-show', event.showId);
     } catch (error) {
       console.error('Error handling WatchedShowEvent:', error);
     }
