@@ -109,7 +109,7 @@ nx test worker
 
 The system is configured with the following resource limits(for fun):
 - API: 0.5 CPU, 256MB RAM
-- Worker: No specific limits
+- Worker: 0.5 CPU, 256MB RAM
 - Cassandra: 2 CPU, 6GB RAM
 - PostgreSQL: 0.1 CPU, 256MB RAM
 - Qdrant: 0.5 CPU, 512MB RAM
