@@ -18,7 +18,7 @@ import { ApiQuery } from '@nestjs/swagger';
 export class WatchlistController {
   constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
-  @Post(':userId/watch-movie')
+  @Post(':userId')
   async watchMovie(
     @Param('userId') userId: string,
     @Body() watchShow: WatchShowDto

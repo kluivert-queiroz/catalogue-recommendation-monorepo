@@ -58,7 +58,7 @@ This will start all required services:
 ### Adding a Show to Watch History
 
 ```bash
-curl -X POST http://localhost:3000/api/watchlist/{userId}/watch-movie \
+curl -X POST http://localhost:3000/api/watchlist/{userId} \
   -H "Content-Type: application/json" \
   -d '{"showId": 127532}'
 ```
