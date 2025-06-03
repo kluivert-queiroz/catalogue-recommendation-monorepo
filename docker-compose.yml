@@ -23,9 +23,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-
-    # cpus: '0.5'
-    # mem_limit: 256M
+    cpus: '0.5'
+    mem_limit: 256M
   worker1:
     <<: *app
     container_name: worker1
