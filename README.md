@@ -36,8 +36,7 @@ The system follows the CQRS (Command Query Responsibility Segregation) pattern:
 ## Prerequisites
 
 - Docker and Docker Compose
-- Node.js 18+ (for local development)
-- pnpm 10.10.0+
+- Node.js 22+ (for local development)
 
 ## How to run
 
