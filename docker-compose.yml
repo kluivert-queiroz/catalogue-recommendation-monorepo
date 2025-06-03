@@ -13,6 +13,8 @@ x-common: &app
       condition: service_healthy
   env_file:
     - ./.env
+  cpus: '0.5'
+  mem_limit: 256M
 services:
   api:
     <<: *app
@@ -23,8 +25,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    cpus: '0.5'
-    mem_limit: 256M
   worker1:
     <<: *app
     container_name: worker1
